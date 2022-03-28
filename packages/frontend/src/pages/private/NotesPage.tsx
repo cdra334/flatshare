@@ -20,7 +20,7 @@ const NotesPage: React.FC<NotesProps> = () => {
       <div className="flex justify-between items-center pb-1">
         <UnderlinedText colorClasses="from-gray-800 via-teal-700 to-teal-500 ">
           <div className="text-lg font-medium">
-            Create Note
+            Create Note:{' '}
             <span className="text-teal-500 font-semibold">{name}</span>
           </div>
         </UnderlinedText>
