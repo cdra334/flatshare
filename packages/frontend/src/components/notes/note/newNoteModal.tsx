@@ -160,8 +160,8 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
           <Container direction="column" display="flex" css={{ p: 0 }}>
             {showSecretInputs && (
               <Text size={'1rem'} margin="0% 0% 0% 1.5%" color="red">
-                Warning: Secrets aren't stored securely. Be aware that all
-                information can be seen by others.
+                Warning: Secrets are not protected by a password. Be aware that
+                all information stored will be accesible to your flatmates.
               </Text>
             )}
             <Text size={'1.25rem'} margin="1.5%">
