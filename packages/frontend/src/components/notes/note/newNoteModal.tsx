@@ -12,15 +12,16 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import { NoteTypes } from './noteCardController';
+import { useApi, useApiMutation } from '../../../hooks/useApi';
 
-const NORMAL_TYPE = 'Normal';
+const PLAIN_TYPE = 'Normal';
 const SECRET_TYPE = 'Secret';
 const WIFI_TYPE = 'WiFi';
 
 const noteType = [
-  { name: NORMAL_TYPE },
-  { name: SECRET_TYPE },
-  { name: WIFI_TYPE },
+  { name: PLAIN_TYPE, type: NoteTypes.PLAIN },
+  { name: SECRET_TYPE, type: NoteTypes.SECRET },
+  { name: WIFI_TYPE, type: NoteTypes.WIFI },
 ];
 
 interface NewNoteModalProps {
@@ -52,6 +53,7 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
     type: NoteTypes.PLAIN,
   });
 
+  // username and password stored in single 'value' string separated by ':'
   const handleAddUsernameField = (e: ChangeEvent<FormElement>) => {
     setNewNoteDetails((prevState) => ({
       ...prevState,
@@ -67,10 +69,19 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
     }));
   };
 
-  const handleCreate = () => {
-    console.log('creating note');
-    console.log(newNoteDetails);
-  };
+  const createNote = useApiMutation('/api/v1/house/note', { method: 'post' });
+
+  // to update notes dashboard on create
+  const { mutate } = useApi('/api/v1/house/note', { method: 'get' });
+
+  async function handleCreate() {
+    closeNoteHandler();
+    try {
+      const { name, value, type } = newNoteDetails;
+      await createNote({ body: { name, value, type } });
+      mutate();
+    } catch (e) {}
+  }
 
   return (
     <Modal
@@ -115,6 +126,10 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
             else setShowWifiInputs(false);
             if (e.name === SECRET_TYPE) setShowSecretInputs(true);
             else setShowSecretInputs(false);
+            setNewNoteDetails((prevState) => ({
+              ...prevState,
+              type: e.type,
+            }));
           }}
         >
           <div className="relative mt-1">
