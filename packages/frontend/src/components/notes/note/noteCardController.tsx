@@ -35,7 +35,6 @@ const NoteCardController: React.FC<NoteCardControllerProps> = () => {
   return (
     <div>
       <NotesModal Notes={data} />
-      <Button onClick={onClickTest}>Test</Button>
     </div>
   );
 };
