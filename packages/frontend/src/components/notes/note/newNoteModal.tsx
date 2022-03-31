@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Fragment } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid';
 import {
   Button,
   Container,
+  FormElement,
   Input,
   Modal,
   Text,
   Textarea,
 } from '@nextui-org/react';
+import { NoteTypes } from './noteCardController';
 
 const NORMAL_TYPE = 'Normal';
 const SECRET_TYPE = 'Secret';
@@ -38,6 +40,38 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
 
   const [showSecretInputs, setShowSecretInputs] = useState(false);
 
+  interface NewNoteDetails {
+    name: string;
+    value: string;
+    type: NoteTypes;
+  }
+
+  const [newNoteDetails, setNewNoteDetails] = useState<NewNoteDetails>({
+    name: '',
+    value: '',
+    type: NoteTypes.PLAIN,
+  });
+
+  const handleAddUsernameField = (e: ChangeEvent<FormElement>) => {
+    setNewNoteDetails((prevState) => ({
+      ...prevState,
+      // split only at first occurence of ':'
+      value: e.target.value + ':' + prevState.value.split(/:(.*)/s)[1],
+    }));
+  };
+
+  const handleAddPasswordField = (e: ChangeEvent<FormElement>) => {
+    setNewNoteDetails((prevState) => ({
+      ...prevState,
+      value: prevState.value.split(':')[0] + ':' + e.target.value,
+    }));
+  };
+
+  const handleCreate = () => {
+    console.log('creating note');
+    console.log(newNoteDetails);
+  };
+
   return (
     <Modal
       closeButton
@@ -62,6 +96,12 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
           placeholder="Enter your note header"
           size="xl"
           color="primary"
+          onChange={(e) =>
+            setNewNoteDetails((prevState) => ({
+              ...prevState,
+              name: e.target.value,
+            }))
+          }
         ></Input>
         <Text size={'1.25rem'} margin="1.5%">
           Type
@@ -140,6 +180,7 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
               placeholder="Enter the username"
               size="xl"
               color="primary"
+              onChange={(e) => handleAddUsernameField(e)}
             ></Input>
             <Text size={'1.25rem'} margin="1.5%">
               Password
@@ -151,6 +192,7 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
               placeholder="Enter the password"
               size="xl"
               color="primary"
+              onChange={(e) => handleAddPasswordField(e)}
             ></Input>
           </Container>
         ) : null}
@@ -174,12 +216,18 @@ const NewNoteModal: React.FC<NewNoteModalProps> = ({
               placeholder="Enter your note here"
               size="xl"
               color="primary"
+              onChange={(e) =>
+                setNewNoteDetails((prevState) => ({
+                  ...prevState,
+                  value: e.target.value,
+                }))
+              }
             ></Textarea>
           </Container>
         ) : null}
       </Modal.Body>
       <Modal.Footer css={{ cursor: 'auto' }}>
-        <Button size="md" className="sm: text-lg">
+        <Button size="md" className="sm: text-lg" onClick={handleCreate}>
           Create
         </Button>
       </Modal.Footer>
